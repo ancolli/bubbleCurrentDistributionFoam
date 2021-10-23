@@ -1,0 +1,91 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha.gas;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {
+	type            fixedValue;
+        value           uniform 0;
+    }
+    outlet
+    {
+	type            inletOutlet;
+        phi             phi.gas;
+        inletValue      $internalField;
+        value           $internalField;
+    }
+    wall_cathode
+    {
+        type            codedFixedValue;
+        value           uniform 0.1;
+
+    // Name of generated boundary condition
+        name    alphagas_cathode;
+
+        code
+        #{
+        	const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    		label patchID = p.patch().boundaryMesh().findPatchID("wall_cathode");                                       // Desired patch ID
+        	
+        	const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // 
+                const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); //   	
+	        const scalarField kf_boundary = kf_.boundaryField()[patchID];
+	                                                   
+                const scalarField grad_fi = -fi_.boundaryField()[patchID].snGrad();  
+        	const scalarField flux = kf_boundary*grad_fi;
+        	operator==(max(min(0.023*Foam::pow(mag(flux), 0.3),0.99),0.01));
+        #};
+    }
+    wall_anode
+    {
+        type            codedFixedValue;
+        value           uniform 0.1;
+
+    // Name of generated boundary condition
+        name    alphagas_anode;
+
+        code
+        #{
+        	const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    		label patchID = p.patch().boundaryMesh().findPatchID("wall_anode");                                       // Desired patch ID
+     	
+        	const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // 
+                const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); //   	
+	        const scalarField kf_boundary = kf_.boundaryField()[patchID];
+                                                            
+                const scalarField grad_fi = -fi_.boundaryField()[patchID].snGrad();  
+        	const scalarField flux = kf_boundary*grad_fi;//
+        	
+        	
+        	operator==(max(min(0.023*Foam::pow(mag(flux), 0.3),0.99),0.01));
+        #};
+    }
+    wall_isolation
+    {
+        type            zeroGradient;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

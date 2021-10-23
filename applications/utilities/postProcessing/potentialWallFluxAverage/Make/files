@@ -1,0 +1,3 @@
+potentialWallFluxAverage.C
+
+LIB = $(FOAM_USER_LIBBIN)/libpotentialWallFluxAverageFunctionObject

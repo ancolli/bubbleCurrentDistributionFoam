@@ -1,0 +1,3 @@
+wallLubricationModels/Frank1/Frank1.C
+
+LIB = $(FOAM_USER_LIBBIN)/libeulerianInterfacialModelsPropios

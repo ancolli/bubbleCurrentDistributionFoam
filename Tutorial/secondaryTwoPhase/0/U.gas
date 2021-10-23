@@ -1,0 +1,125 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  dev
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      binary;
+    class       volVectorField;
+    object      U.gas;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {
+	type               fixedValue;
+        value              uniform (0 0 0);     
+    }
+    outlet
+    {
+
+	type               pressureInletOutletVelocity;
+        phi                phi.gas;
+        value              $internalField;
+    }
+    wall_cathode
+    {
+        type            codedFixedValue;
+        value           uniform (0 0 0);
+
+    // Name of generated boundary condition
+        name    velocity_cathode;
+
+        code
+        #{
+        	const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    		label patchID = p.patch().boundaryMesh().findPatchID("wall_cathode");                                       // Desired patch ID
+
+        	const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // 
+                const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); //   
+                	                        	
+	        const scalarField kf_boundary = kf_.boundaryField()[patchID];                                              
+                const scalarField grad_fi = -fi_.boundaryField()[patchID].snGrad();  
+        	const scalarField flux = kf_boundary*grad_fi;
+        	
+        	const volScalarField& alpha_ = this->db().objectRegistry::template lookupObject<volScalarField>("alpha.gas");   // Desired field 1
+        	const scalarField alpha_boundary = alpha_.boundaryField()[patchID];   
+        	
+        	const volScalarField& p_ = this->db().objectRegistry::template lookupObject<volScalarField>("p");   // Desired field 1
+        	const scalarField p_boundary = p_.boundaryField()[patchID];
+        	
+        	const volScalarField& T_ = this->db().objectRegistry::template lookupObject<volScalarField>("T.gas");   // Desired field 1
+        	const scalarField T_boundary = T_.boundaryField()[patchID];
+        	
+        	const scalar n = 2, F = 96485, R = 8.31; 
+        	const fvPatch& boundaryPatch = patch(); 
+            	const vectorField& Cf = boundaryPatch.Cf(); 
+                vectorField& campo = *this; 
+        
+        	forAll(Cf, faceI)
+        	{
+            		campo[faceI] = vector(0,-1.0*R*T_boundary[faceI]/p_boundary[faceI]/F/n/max(alpha_boundary[faceI],1e-10)*flux[faceI],0);
+        	}
+        #};
+    }
+    wall_anode
+    {
+        type            codedFixedValue;
+        value           uniform (0 0 0);
+
+    // Name of generated boundary condition
+        name    velocity_anode;
+
+        code
+        #{
+        	const fvPatch& p = this->patch();                                                                          // Actual boundary/patch
+    		label patchID = p.patch().boundaryMesh().findPatchID("wall_anode");                                       // Desired patch ID
+
+        	const volScalarField& kf_ = this->db().objectRegistry::template lookupObject<volScalarField>("keff");   // 
+                const volScalarField& fi_ = this->db().objectRegistry::template lookupObject<volScalarField>("fi"); //   		      
+	        
+	        const scalarField kf_boundary = kf_.boundaryField()[patchID];                                              
+                const scalarField grad_fi = -fi_.boundaryField()[patchID].snGrad();  
+        	const scalarField flux = kf_boundary*grad_fi;
+        	
+        	const volScalarField& alpha_ = this->db().objectRegistry::template lookupObject<volScalarField>("alpha.gas");   // Desired field 1
+        	const scalarField alpha_boundary = alpha_.boundaryField()[patchID];  
+        	
+        	const volScalarField& p_ = this->db().objectRegistry::template lookupObject<volScalarField>("p");   // Desired field 1
+        	const scalarField p_boundary = p_.boundaryField()[patchID];
+        	
+        	const volScalarField& T_ = this->db().objectRegistry::template lookupObject<volScalarField>("T.gas");   // Desired field 1
+        	const scalarField T_boundary = T_.boundaryField()[patchID]; 
+        	
+        	const scalar n = 4, F = 96485, R = 8.31; //
+        	const fvPatch& boundaryPatch = patch(); 
+            	const vectorField& Cf = boundaryPatch.Cf(); 
+                vectorField& campo = *this; 
+        
+        	forAll(Cf, faceI)
+        	{
+            		campo[faceI] = vector(0,-1.0*R*T_boundary[faceI]/p_boundary[faceI]/F/n/max(alpha_boundary[faceI],1e-10)*flux[faceI],0);
+        	}
+        #};
+    }
+    wall_isolation
+    {
+        type               noSlip;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //
