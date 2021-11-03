@@ -3,7 +3,7 @@
 Cite as: 
 DOI: 
 
-# tertiaryMigrationCurrentDistributionFoam
+# bubbleCurrentDistributionFoam
 It is described how to simulate secndary current distribution in electrochemical reactors with biphasic (gas-liquid) flow with the help of OpenFOAM. It is showed how to pre-process, run and post-process a basic case involving a 2D domain using the developed solver potentialMultiphaseEulerFoam and BC as codedMixed.
 The proposed strategy is fully functional in OpenFOAM version 8.
 
