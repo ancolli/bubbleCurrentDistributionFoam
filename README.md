@@ -1,6 +1,6 @@
 # v1.0.0
 
-Cite as: A.N. Colli and J.M. Bisang. Current and Potential Distribution in Two-Phase (Gas Evolving) Electrochemical Reactors by the Finite Volume Method. J. Electrochem. Soc. 169 034524  
+Cite as: A.N. Colli and J.M. Bisang. Current and Potential Distribution in Two-Phase (Gas Evolving) Electrochemical Reactors by the Finite Volume Method. J. Electrochem. Soc. 169 (2022) 034524  
 DOI: https://doi.org/10.1149/1945-7111/ac5d90
 
 # bubbleCurrentDistributionFoam
