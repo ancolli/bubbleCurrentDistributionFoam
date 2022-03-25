@@ -1,7 +1,7 @@
 # v1.0.0
 
-Cite as: 
-DOI: 
+Cite as: J. Electrochem. Soc. 169 034524
+DOI: https://doi.org/10.1149/1945-7111/ac5d90
 
 # bubbleCurrentDistributionFoam
 It is described how to simulate secndary current distribution in electrochemical reactors with biphasic (gas-liquid) flow with the help of OpenFOAM. It is showed how to pre-process, run and post-process a basic case involving a 2D domain using the developed solver potentialMultiphaseEulerFoam and BC as codedMixed.
