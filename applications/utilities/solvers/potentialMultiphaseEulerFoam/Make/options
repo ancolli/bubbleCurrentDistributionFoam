@@ -3,6 +3,7 @@ EXE_INC = \
     -I$(LIB_SRC)/../applications/solvers/multiphase/multiphaseEulerFoam/phaseSystems/lnInclude \
     -I$(LIB_SRC)/../applications/solvers/multiphase/multiphaseEulerFoam/interfacialModels/lnInclude \
     -I$(LIB_SRC)/../applications/solvers/multiphase/multiphaseEulerFoam/interfacialCompositionModels/lnInclude \
+    -I$(LIB_SRC)/../applications/solvers/multiphase/multiphaseEulerFoam/multiphaseEulerFoam \
     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
     -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
     -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \

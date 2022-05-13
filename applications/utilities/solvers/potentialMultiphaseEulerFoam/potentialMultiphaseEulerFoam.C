@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
     #include "createTimeControls.H"
     #include "createFields.H"
     #include "createFieldRefs.H"
+    #include "createFieldsHere.H"
 
     if (!LTS)
     {

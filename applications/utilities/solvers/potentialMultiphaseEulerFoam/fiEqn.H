@@ -7,8 +7,7 @@ Info<< "Min/max alpha:" << min(alpha).value() << ' ' << max(alpha).value() << en
 
 dimensionedScalar Min_kf("Min_kf",dimensionSet(-1,-3,3,0,0,2,0), SMALL); //[-1 -3 3 0 0 2 0] 
 
-keff == max(Min_kf, kf*Foam::pow(1-alpha, 1.5)); //1.5//Min_kf in order to avoid crashing when alpha = 1
-
+keff == max(Min_kf, kf*Foam::pow(1-alpha, 1.5)); //Min_kf in order to avoid crashing when alpha = 1
 //potential field
     fi.storePrevIter();
     solve
@@ -18,8 +17,7 @@ keff == max(Min_kf, kf*Foam::pow(1-alpha, 1.5)); //1.5//Min_kf in order to avoid
 
     fi.relax();
 
-Info<< "Min/max fi:" << min(fi).value() << ' '
-    << max(fi).value() << endl;
+Info<< "Min/max fi:" << min(fi).value() << ' ' << max(fi).value() << endl;
 
 //check if wall_anode exist
 string patchNameNeeded = "wall_anode";
