@@ -22,14 +22,13 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    reactingMultiphaseEulerFoam
+    potentialMultiphaseEulerFoam
 
 Description
-    Solver for a system of any number of compressible fluid phases with a
-    common pressure, but otherwise separate properties. The type of phase model
-    is run time selectable and can optionally represent multiple species and
-    in-phase reactions. The phase system is also run time selectable and can
-    optionally represent different types of momentum, heat and mass transfer.
+    Solver for secondary current distribution in electrochemical reactors with 
+    any number of compressible fluid phases with common pressure, but otherwise 
+    separate properties. The type of phase mode is run time selectable and can 
+    optionally represent multiple species and in-phase reactions. 
 
 \*---------------------------------------------------------------------------*/
 
