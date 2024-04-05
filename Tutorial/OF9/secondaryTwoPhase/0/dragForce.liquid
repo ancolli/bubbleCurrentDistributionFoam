@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      dragForce.liquid;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -2 -2 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {
+        type            calculated;
+        value           uniform (0 0 0);
+    }
+    outlet
+    {
+        type            calculated;
+        value           uniform (0 0 0);
+    }
+    wall_anode
+    {
+        type            calculated;
+        value           uniform (0 0 0);
+    }
+    wall_cathode
+    {
+        type            calculated;
+        value           uniform (0 0 0);
+    }
+    wall_isolation
+    {
+        type            calculated;
+        value           uniform (0 0 0);
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

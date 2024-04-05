@@ -1,0 +1,43 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9
+     \\/     M anipulation  |
+-------------------------------------------------------------------------------
+Description
+    Writes graph data for specified fields along a line, specified by start and
+    end points. A specified number of graph points are used, distributed
+    uniformly along the line.
+
+\*---------------------------------------------------------------------------*/
+
+start           (0.05 0 0.256);
+end             (0.05 0.005 0.256);
+nPoints         100;
+
+fields               (
+            alpha.gas
+            f1.gas
+            f2.gas
+            f3.gas
+            f4.gas
+            f5.gas
+            U.gas
+            U.liquid
+            
+            
+            dragForce.liquid
+            liftForce.liquid
+            wallLubricationForce.liquid
+            turbulentDispersionForce.liquid
+            virtualMassForce.liquid
+        );
+
+axis            distance; // The independent variable of the graph. Can be "x",
+                          // "y", "z", "xyz" (all coordinates written out), or
+                          // "distance" (from the start point).
+
+#includeEtc "caseDicts/postProcessing/graphs/graphUniform.cfg"
+
+// ************************************************************************* //

@@ -1,0 +1,302 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  8
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      phaseProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type populationBalanceMultiphaseSystem;//basicMultiphaseSystem;//
+
+phases (gas liquid);
+
+populationBalances (bubbles);
+
+referencePhase liquid;
+
+gas
+{
+    type            purePhaseModel;//pureIsothermalPhaseModel;//
+    diameterModel   velocityGroup;//constant;//
+    velocityGroupCoeffs
+    {
+        populationBalance    bubbles;
+
+        shapeModel           spherical;
+
+        sizeGroups
+        (
+            f1{dSph  5e-5; value 0;}
+            f2{dSph  1.25e-4; value 1;}
+            f3{dSph  2e-4; value 0;}
+            f4{dSph  2.75e-4; value 0;}
+            f5{dSph  3.5e-4; value 0;}        
+        );
+    }
+
+    /*constantCoeffs
+    {
+        d               2.25e-4;//1e-4;//1e-3;//
+    }
+    diameterModel   isothermal;
+    isothermalCoeffs
+    {
+        d0              3e-3;
+        p0              1e5;
+    }*/
+
+    residualAlpha   1e-6;
+}
+
+liquid
+{
+    type            purePhaseModel;//pureIsothermalPhaseModel;//
+    diameterModel   constant;
+    constantCoeffs
+    {
+        d               1e-6;//1e-4
+    }
+
+    residualAlpha   1e-6;
+}
+
+populationBalanceCoeffs
+{
+    bubbles
+    {
+        continuousPhase liquid;
+
+        coalescenceModels
+        (
+            /*PrinceBlanch{
+            		turbulence	yes;
+            		buoyancy      yes;
+        		laminarShear	yes;
+        		}
+            Luo{}//LehrMilliesMewes{}//CoulaloglouTavlarides{}//
+            //brownianCollisions{}//re lerdo*/
+            turbulentShear//hydrodynamic///
+            {
+                C 0.05;
+            }
+        );
+
+        binaryBreakupModels
+        (
+           //LehrMilliesMewes{}
+        );
+
+        breakupModels
+        (
+            exponential
+            {
+                C 0.5;
+                exponent 0.01;
+                daughterSizeDistributionModel uniformBinary;//Laakkonen
+
+            }
+        );
+
+        driftModels
+        (
+            //densityChange{}
+        );
+
+        nucleationModels
+        ();
+    }
+}
+
+
+/*blending
+{
+    default
+    {
+        type            none;
+        continuousPhase liquid;
+    }
+}*/
+
+
+/*Method to decide dispersed phase and continuous phase locally for each cell.  
+Parameter minPartlyContinuousAlpha.air specifies the minimum volume fraction of 
+the gas phase in a cell volume which can be considered as dispersed phase. 
+minFullyContinuousAlpha.air specifies the minimum volume fraction of the air to be
+considered as continuous phase, the other phase will become the dispersed phase*/
+
+blending
+{
+    default
+    {
+        type            linear;
+        minFullyContinuousAlpha.gas 0.7;//0.7;
+        minPartlyContinuousAlpha.gas 0.3;//0.3;
+        minFullyContinuousAlpha.liquid 0.7;//1.0;//0.7;
+        minPartlyContinuousAlpha.liquid 0.3;//0.0;//0.3;
+    }
+    drag
+    {
+        type            none;
+        continuousPhase liquid;//none;//
+    }
+}
+
+surfaceTension
+(
+    (gas and liquid)
+    {
+        type            constant;
+        sigma           0.05;//0.075;
+    }
+);
+
+interfaceCompression
+();
+
+aspectRatio
+(
+    /*(gas in liquid)
+    {
+        type            constant;
+        E0              1.0;
+    }
+
+    (liquid in gas)
+    {
+        type            constant;
+        E0              1.0;
+    }*/
+);
+
+drag
+(
+    (gas in liquid)
+    {
+        type            Lain;//SchillerNaumann;//IshiiZuber;//WenYu;//SyamlalOBrien;//
+
+        residualRe      1e-3;
+        swarmCorrection
+        {
+            type        Electrochemistry;//Tomiyama;//none;//
+            l           7.5;//14.65;//
+            u0		2.5;//0.07;//
+            ul0	0.2;//1e-3;//
+        }
+    }
+
+    /*(liquid in gas)
+    {
+        type            Lain;//SchillerNaumann;//IshiiZuber;//WenYu;//SyamlalOBrien;//
+        residualRe      1e-3;
+        swarmCorrection
+        {
+            type        none;//Tomiyama;//
+            //l           1;
+        }
+    }*/
+
+    /*(gas and liquid)
+    {
+ 
+        type            segregated;// used when is it not clear which one is the dispersed phase
+
+        m               0.5;
+        n               8;
+        swarmCorrection
+        {
+            type        none;
+        }
+    }*/
+);
+
+virtualMass
+(
+    (gas in liquid)
+    {
+        type		constantCoefficient;//type            none;//
+        Cvm             0.5;
+    }
+
+    /*(liquid in gas)
+    {
+        type            constantCoefficient;
+        Cvm             0.5;
+    }*/
+);
+
+heatTransfer // no Heat Transfer
+(
+   /* (gas in liquid)
+    {
+        type            RanzMarshall;
+        residualAlpha   1e-4;
+    }
+
+    (liquid in gas)
+    {
+        type            RanzMarshall;
+        residualAlpha   1e-4;
+    }*/
+);
+
+phaseTransfer
+();
+
+lift
+(
+    (gas in liquid)
+    {
+             
+        type Tomiyama;//LegendreMagnaudet;//wallDamped;//constantCoefficient;
+           
+        Cl              0.288;//0.5;
+        //residualRe      1e-3; // for LegendreMagnaudet
+
+        /*wallDamping
+        {
+            type    cosine;
+            Cd      1.0;
+            zeroWallDist 0.0002;
+        }*/
+
+    }
+);
+
+wallLubrication
+(
+    (gas in liquid)
+    {
+        type            Frank1;
+        Cwd		6.8;
+        p		1.7;
+        Cwc		1.69;
+        //type		Antal;
+        //Cw1             -0.01;
+        //Cw2             0.05;
+    }
+);
+
+turbulentDispersion
+(
+    (gas in liquid)
+    {
+    	type                LopezDeBertodano;//Gosman;//Burns;//none;//constantCoefficient;//
+    	Ctd		     1.0;//1.0;// for LopezDeBertodano or constantCoefficient
+        //sigma               0.7; //for Burns or Gosman 
+        residualAlpha       1e-3;//for LopezDeBertodano
+    }
+
+);
+
+
+
+// ************************************************************************* //

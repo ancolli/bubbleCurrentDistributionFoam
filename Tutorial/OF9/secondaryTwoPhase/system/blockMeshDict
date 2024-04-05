@@ -1,0 +1,155 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  dev                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 0.001;
+
+
+e 100;
+h 5;//
+z1 5; //
+z2 255; //
+z3 260;//
+
+ny 30;//50;//20;//
+nz 100;//150;//40;//80;//250;//
+nz1 2;//2;//4;
+nz2 2;//2;//4;//
+
+gy            
+            ( 
+	      (0.5 0.5 2.0)    // 10% y-dir, 15% cells, expansion = 10 (0.5 0.5 50) 
+              (0.5 0.5 0.5)  // (0.5 0.5 0.02)
+            ) ;
+
+
+vertices
+(
+
+(0 0 0)
+($e 0 0)
+($e $h 0)
+(0 $h 0)
+
+(0 0 $z1)
+($e 0 $z1)
+($e $h $z1)
+(0 $h $z1)
+
+(0 0 $z2)
+($e 0 $z2)
+($e $h $z2)
+(0 $h $z2)
+
+(0 0 $z3)
+($e 0 $z3)
+($e $h $z3)
+(0 $h $z3)				
+
+
+);
+
+blocks
+(
+
+hex	(0 1 2 3 4 5 6 7)	(1 $ny $nz1) simpleGrading (1 $gy 1)
+hex	(4 5 6 7 8 9 10 11)	(1 $ny $nz) simpleGrading (1 $gy 1)
+hex	(8 9 10 11 12 13 14 15)	(1 $ny $nz2) simpleGrading (1 $gy 1)
+											
+);
+
+edges
+(
+
+);
+
+boundary
+(
+    inlet
+    {
+        type wall;//patch;
+        faces
+        (
+		(0 1 2 3)	
+        );
+    }
+
+    outlet
+    {
+        type patch;
+        faces
+        (
+		(15 14 13 12)
+        );
+    }
+
+
+    wall_anode
+    {
+        type wall;
+        faces
+        (
+		//(0 4 5 1)		
+		(4 8 9 5)
+		//(8 12 13 9)
+        );
+    }
+ 
+    wall_cathode
+    {
+        type wall;
+        faces
+        (	
+		//(3 2 6 7)
+		(7 6 10 11)
+		//(11 10 14 15)
+        );
+    }
+
+    wall_isolation
+    {
+        type wall;
+        faces
+        (
+		(0 4 5 1)
+		(8 12 13 9)
+		(3 2 6 7)
+		(11 10 14 15)
+        );
+    }
+					
+
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+		(1 5 6 2)
+		(5 9 10 6)
+		(9 13 14 10)
+		
+		(0 3 7 4)
+		(4 7 11 8)
+		(8 11 15 12)		
+					
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

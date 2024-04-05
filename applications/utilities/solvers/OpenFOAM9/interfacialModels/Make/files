@@ -1,0 +1,4 @@
+wallLubricationModels/Frank1/Frank1.C
+swarmCorrections/ElectrochemistrySwarm/ElectrochemistrySwarm.C
+
+LIB = $(FOAM_USER_LIBBIN)/libeulerianInterfacialModelsPropios
